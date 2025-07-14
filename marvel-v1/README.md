@@ -117,5 +117,5 @@ ETag: f0fbae65eb2f8f28bdeea0a29be8749a4e67acb3
 Content-Encoding: gzip
 
 My API keys:
-public: ead78c33f14525acb6ca6d117a15e2842d2386b3
-private: 6f1be41d0ffe30b97a1ddc8d0138a6ed
+public:6f1be41d0ffe30b97a1ddc8d0138a6ed
+private:ead78c33f14525acb6ca6d117a15e2842d2386b3

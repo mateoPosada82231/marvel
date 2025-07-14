@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const md5 = require('md5');
 const app = express();
 
 // Middleware
@@ -10,90 +9,132 @@ app.use(express.json());
 
 // Configuración
 const PORT = process.env.PORT || 3001;
-const MARVEL_PUBLIC_KEY = process.env.MARVEL_PUBLIC_KEY;
-const MARVEL_PRIVATE_KEY = process.env.MARVEL_PRIVATE_KEY;
+const SUPERHERO_API_KEY = process.env.SUPERHERO_API_KEY || '10223569763528853'; // Clave de ejemplo
 
-// Ruta para obtener personajes de Marvel
-app.get('/api/marvel/characters', async (req, res) => {
+// Validar que la clave esté configurada
+if (!SUPERHERO_API_KEY) {
+    console.error('Error: La clave API de SuperHero no está configurada');
+    process.exit(1);
+}
+
+console.log('Configuración cargada:');
+console.log('- Puerto: ' + PORT);
+console.log('- Clave API SuperHero configurada: Sí');
+
+// Ruta de prueba para validar la API
+app.get('/api/superheroes/test', async (req, res) => {
     try {
-        // Generamos el timestamp y el hash para la autenticación
-        const ts = new Date().getTime();
-        const hash = md5(ts + MARVEL_PRIVATE_KEY + MARVEL_PUBLIC_KEY);
-
-        // Parámetros de consulta que pueden venir del frontend
-        const { limit = 10, offset = 0, nameStartsWith } = req.query;
-
-        // Construimos la URL base
-        let url = `https://gateway.marvel.com/v1/public/characters?ts=${ts}&apikey=${MARVEL_PUBLIC_KEY}&hash=${hash}&limit=${limit}&offset=${offset}`;
-
-        // Añadimos filtro por nombre si existe
-        if (nameStartsWith) {
-            url += `&nameStartsWith=${encodeURIComponent(nameStartsWith)}`;
-        }
-
-        // Realizamos la petición a la API de Marvel
+        const url = `https://superheroapi.com/api/${SUPERHERO_API_KEY}/1`;
+        console.log('- URL de prueba: ' + url);
+        
         const response = await fetch(url);
-
+        
         if (!response.ok) {
-            throw new Error(`Error en la API de Marvel: ${response.status}`);
+            const errorBody = await response.text();
+            console.error(`Error de API (${response.status}):`, errorBody);
+            return res.status(response.status).json({
+                error: `Error ${response.status} al acceder a SuperHero API`,
+                details: errorBody
+            });
         }
-
+        
         const data = await response.json();
-        res.json(data);
+        res.json({
+            success: true,
+            message: 'Conexión exitosa con SuperHero API',
+            testResult: data
+        });
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Error al obtener datos de Marvel API' });
+        console.error('Error en prueba de conexión:', error);
+        res.status(500).json({ error: 'Error al probar la API' });
     }
 });
 
-// Ruta para obtener detalles de un personaje específico
-app.get('/api/marvel/characters/:characterId', async (req, res) => {
+// Ruta para buscar superhéroes
+app.get('/api/superheroes/search', async (req, res) => {
     try {
-        const { characterId } = req.params;
-        const ts = new Date().getTime();
-        const hash = md5(ts + MARVEL_PRIVATE_KEY + MARVEL_PUBLIC_KEY);
-
-        const url = `https://gateway.marvel.com/v1/public/characters/${characterId}?ts=${ts}&apikey=${MARVEL_PUBLIC_KEY}&hash=${hash}`;
-
+        const { name = 'man' } = req.query;
+        const url = `https://superheroapi.com/api/${SUPERHERO_API_KEY}/search/${encodeURIComponent(name)}`;
+        
+        console.log('Buscando superhéroes:', url);
+        
         const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`Error en la API de Marvel: ${response.status}`);
-        }
-
         const data = await response.json();
+        
+        // La API devuelve "error" cuando no encuentra resultados
+        if (data.response === 'error') {
+            return res.json({
+                response: 'success',
+                results: []  // Devolvemos array vacío en lugar de error
+            });
+        }
+        
         res.json(data);
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ error: 'Error al obtener datos del personaje' });
+        res.status(500).json({ 
+            error: 'Error al buscar superhéroes',
+            message: error.message
+        });
     }
 });
 
-// Ruta para obtener comics de un personaje
-app.get('/api/marvel/characters/:characterId/comics', async (req, res) => {
+// Ruta para obtener un superhéroe por ID
+app.get('/api/superheroes/:id', async (req, res) => {
     try {
-        const { characterId } = req.params;
-        const { limit = 10, offset = 0 } = req.query;
-        const ts = new Date().getTime();
-        const hash = md5(ts + MARVEL_PRIVATE_KEY + MARVEL_PUBLIC_KEY);
-
-        const url = `https://gateway.marvel.com/v1/public/characters/${characterId}/comics?ts=${ts}&apikey=${MARVEL_PUBLIC_KEY}&hash=${hash}&limit=${limit}&offset=${offset}`;
-
+        const { id } = req.params;
+        const url = `https://superheroapi.com/api/${SUPERHERO_API_KEY}/${id}`;
+        
+        console.log('Obteniendo superhéroe:', url);
+        
         const response = await fetch(url);
-
+        
         if (!response.ok) {
-            throw new Error(`Error en la API de Marvel: ${response.status}`);
+            return res.status(response.status).json({ 
+                error: `Error al obtener superhéroe: ${response.status}`
+            });
         }
-
+        
         const data = await response.json();
         res.json(data);
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ error: 'Error al obtener comics del personaje' });
+        res.status(500).json({ 
+            error: 'Error al obtener superhéroe',
+            message: error.message
+        });
+    }
+});
+
+// Ruta para obtener conexiones de un superhéroe (como alternativa a los comics)
+app.get('/api/superheroes/:id/connections', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const url = `https://superheroapi.com/api/${SUPERHERO_API_KEY}/${id}/connections`;
+        
+        console.log('Obteniendo conexiones:', url);
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            return res.status(response.status).json({ 
+                error: `Error al obtener conexiones: ${response.status}`
+            });
+        }
+        
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ 
+            error: 'Error al obtener conexiones',
+            message: error.message
+        });
     }
 });
 
 // Iniciar servidor
 app.listen(PORT, () => {
     console.log(`Servidor backend ejecutándose en http://localhost:${PORT}`);
+    console.log(`Prueba la API: http://localhost:${PORT}/api/superheroes/test`);
 });
