@@ -86,7 +86,7 @@ function App() {
                   <div className="powerstats">
                     <h4 style={{ color: '#333' }}>Estadísticas</h4>
                     <div className="stat">
-                      <span>Inteligencia:</span>
+                      <span>IQ:</span>
                       <div className="stat-bar" style={{ width: `${hero.powerstats.intelligence}%` }}></div>
                       <span>{hero.powerstats.intelligence}</span>
                     </div>

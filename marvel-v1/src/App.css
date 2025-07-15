@@ -14,35 +14,41 @@
   font-weight: bold;
 }
 
-/* Un solo estilo para characters-grid */
+/* Un solo estilo para characters-grid - Modificado para estilo YouTube */
 .characters-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Reducido a 200px */
+  gap: 1rem; /* Reducido el espacio entre tarjetas */
   padding: 1rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-/* Un solo estilo para character-card */
+/* Un solo estilo para character-card - Estilo más compacto */
 .character-card {
-  border: 1px solid #ccc;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
   overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: transform 0.2s, box-shadow 0.2s;
   background-color: #f8f8f8;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .character-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .character-card h3 {
-  padding: 8px; /* Reducido de 10px */
+  padding: 6px; /* Más compacto */
   margin: 0;
   background-color: #333;
   color: white;
   text-align: center;
-  font-size: 1rem; /* Añadido para reducir tamaño de texto */
+  font-size: 0.9rem; /* Texto más pequeño */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -50,40 +56,50 @@
 
 .character-image {
   width: 100%;
-  height: 200px; /* Reducido de 250px */
+  height: 150px; /* Altura reducida */
   object-fit: cover;
   border-bottom: 1px solid #ddd;
 }
 
 .hero-info {
-  padding: 10px; /* Reducido de 15px */
+  padding: 8px; /* Más compacto */
   background-color: #f0f0f0;
-  border-radius: 0 0 8px 8px;
   color: #333;
-  font-size: 0.9rem; /* Reducido tamaño de texto */
+  font-size: 0.85rem; /* Texto más pequeño */
+  flex-grow: 1; /* Ocupa el espacio restante */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Reducimos información visible en la miniatura */
+.hero-info p {
+  margin: 3px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .powerstats {
-  margin-top: 10px; /* Reducido de 15px */
+  margin-top: 8px;
 }
 
 .stat {
   display: flex;
   align-items: center;
-  margin-bottom: 6px; /* Reducido de 8px */
+  margin-bottom: 4px; /* Más compacto */
 }
 
 .stat span {
-  min-width: 80px; /* Reducido de 90px */
+  min-width: 70px; /* Más pequeño */
   color: #333;
-  font-size: 0.85rem; /* Añadido para reducir tamaño */
+  font-size: 0.8rem;
 }
 
 .stat-bar {
-  height: 6px; /* Reducido de 8px */
+  height: 4px; /* Más delgada */
   background-color: #e53935;
-  margin: 0 8px; /* Reducido de 10px */
-  border-radius: 3px;
+  margin: 0 6px;
+  border-radius: 2px;
   flex-grow: 1;
 }
 
@@ -160,20 +176,21 @@
   z-index: 1001;
 }
 
-/* Estilo para el botón "Ver todo" */
+/* Estilo para el botón "Ver todo" - Más compacto */
 .hero-info button {
   display: block;
-  margin: 10px auto 0;
-  padding: 6px 12px;
-  background-color: #333;
+  margin: auto auto 0; /* Lo empuja hacia abajo */
+  padding: 5px 10px;
+  background-color: #e53935;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: background-color 0.2s;
+  margin-top: 8px; /* Espacio arriba del botón */
 }
 
 .hero-info button:hover {
-  background-color: #555;
+  background-color: #c62828;
 }
